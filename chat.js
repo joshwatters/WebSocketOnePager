@@ -26,13 +26,13 @@ websocket.onclose = (event) => {
 
 
 
-let websocket;
-const messagesDiv = document.getElementById('messages');
-const usernameInput = document.getElementById('username');
-const messageInput = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
-const connectButton = document.getElementById('connectButton');
-const disconnectButton = document.getElementById('disconnectButton');
+// let websocket;
+// const messagesDiv = document.getElementById('messages');
+// const usernameInput = document.getElementById('username');
+// const messageInput = document.getElementById('messageInput');
+// const sendButton = document.getElementById('sendButton');
+// const connectButton = document.getElementById('connectButton');
+// const disconnectButton = document.getElementById('disconnectButton');
 
 function connect() {
     // For an API Key authenticated WebSocket API, the key can be automatically added 
