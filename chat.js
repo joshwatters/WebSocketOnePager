@@ -1,5 +1,30 @@
-const websocketEndpoint = 'wss://b3kg2sy7kg.execute-api.us-east-1.amazonaws.com/production/'; 
+const apiEndpoint = 'wss://b3kg2sy7kg.execute-api.us-east-1.amazonaws.com/production/'; 
 const apiKey = 'kVE3MmZaXg3u2igWjE5392om95UxlJ4yaqMSoTv6'; // This key needs to be enabled in your API Gateway stage settings
+const socketUrl = `${apiEndpoint}?x-api-key=${apiKey}`;
+const websocket = new WebSocket(socketUrl);
+
+websocket.onopen = (event) => {
+    console.log('WebSocket connection opened:', event);
+    // You can now send messages
+    websocket.send(JSON.stringify({ action: "sendmessage", data: "Hello from client" }));
+};
+
+websocket.onmessage = (event) => {
+    console.log('Received message:', event.data);
+};
+
+websocket.onerror = (error) => {
+    console.error('WebSocket error:', error);
+};
+
+websocket.onclose = (event) => {
+    console.log('WebSocket connection closed:', event);
+};
+
+
+
+
+
 
 let websocket;
 const messagesDiv = document.getElementById('messages');
