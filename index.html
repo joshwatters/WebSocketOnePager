@@ -20,7 +20,7 @@
     <script>
         // !! IMPORTANT: Replace with your deployed AWS WebSocket API URL !!
         const socketUrl = 'wss://b3kg2sy7kg.execute-api.us-east-1.amazonaws.com/production/'; 
-        let websocket;
+        let websocket2;
 
         const statusDiv = document.getElementById('status');
         const chatbox = document.getElementById('chatbox');
@@ -29,39 +29,39 @@
 
         function connect() {
             statusDiv.textContent = 'Status: Connecting...';
-            websocket = new WebSocket(socketUrl);
+            websocket2 = new WebSocket(socketUrl);
 
-            websocket.onopen = function(event) {
+            websocket2.onopen = function(event) {
                 statusDiv.textContent = 'Status: Connected';
                 log('Connection established.');
             };
 
-            websocket.onmessage = function(event) {
+            websocket2.onmessage = function(event) {
                 // Assuming the backend sends a JSON object with a 'message' field
                 const data = JSON.parse(event.data);
                 log('Received: ' + data.message);
             };
 
-            websocket.onclose = function(event) {
+            websocket2.onclose = function(event) {
                 statusDiv.textContent = 'Status: Disconnected';
                 log('Connection closed. Code: ' + event.code);
             };
 
-            websocket.onerror = function(error) {
+            websocket2.onerror = function(error) {
                 log('Error: ' + error.message);
             };
         }
 
         function send() {
             const message = messageInput.value;
-            if (message && websocket.readyState === WebSocket.OPEN) {
+            if (message && websocket2.readyState === WebSocket.OPEN) {
                 // AWS API Gateway expects a specific JSON format to route the message to the backend
                 // The 'action' key determines which backend route (e.g., 'sendmessage') handles the data
                 const data = {
                     action: 'sendmessage', // Replace with your actual backend route key
                     message: message
                 };
-                websocket.send(JSON.stringify(data));
+                websocket2.send(JSON.stringify(data));
                 messageInput.value = '';
             }
         }
