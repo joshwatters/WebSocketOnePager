@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AWS WebSocket Chat (No Auth)</title>
+    <title>Error Logs</title>
     <style>
         body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
         #chatbox { height: 300px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; margin-bottom: 10px; }
@@ -20,7 +20,7 @@
     <script>
         // !! IMPORTANT: Replace with your deployed AWS WebSocket API URL !!
         const socketUrl = 'wss://b3kg2sy7kg.execute-api.us-east-1.amazonaws.com/production/'; 
-        let websocket2;
+        let Socket;
 
         const statusDiv = document.getElementById('status');
         const chatbox = document.getElementById('chatbox');
@@ -29,39 +29,39 @@
 
         function connect() {
             statusDiv.textContent = 'Status: Connecting...';
-            websocket2 = new WebSocket(socketUrl);
+            Socket = new WebSocket(socketUrl);
 
-            websocket2.onopen = function(event) {
+            Socket.onopen = function(event) {
                 statusDiv.textContent = 'Status: Connected';
                 log('Connection established.');
             };
 
-            websocket2.onmessage = function(event) {
+            Socket.onmessage = function(event) {
                 // Assuming the backend sends a JSON object with a 'message' field
                 const data = JSON.parse(event.data);
                 log('Received: ' + data.message);
             };
 
-            websocket2.onclose = function(event) {
+            Socket.onclose = function(event) {
                 statusDiv.textContent = 'Status: Disconnected';
                 log('Connection closed. Code: ' + event.code);
             };
 
-            websocket2.onerror = function(error) {
+            Socket.onerror = function(error) {
                 log('Error: ' + error.message);
             };
         }
 
         function send() {
             const message = messageInput.value;
-            if (message && websocket2.readyState === WebSocket.OPEN) {
+            if (message && Socket.readyState === WebSocket.OPEN) {
                 // AWS API Gateway expects a specific JSON format to route the message to the backend
                 // The 'action' key determines which backend route (e.g., 'sendmessage') handles the data
                 const data = {
                     action: 'sendmessage', // Replace with your actual backend route key
                     message: message
                 };
-                websocket2.send(JSON.stringify(data));
+                Socket.send(JSON.stringify(data));
                 messageInput.value = '';
             }
         }
