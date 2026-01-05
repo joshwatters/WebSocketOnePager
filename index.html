@@ -1,22 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AWS WebSocket Chat</title>
+    <title>AWS WebSocket Chat (No Auth)</title>
     <style>
-        #chat-container { width: 400px; height: 300px; border: 1px solid black; overflow-y: scroll; padding: 10px; }
-        #message-input { width: 300px; }
-        #connect-status { margin-bottom: 10px; }
+        body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+        #chatbox { height: 300px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; margin-bottom: 10px; }
+        #messageInput { width: 80%; padding: 10px; }
+        #sendButton { width: 18%; padding: 10px; }
+        #status { margin-bottom: 10px; color: gray; }
     </style>
 </head>
 <body>
-    <h2>AWS WebSocket Chat with Authentication</h2>
-    <div id="connect-status"></div>
-    <button onclick="connectWebSocket()">Connect</button>
-    <br><br>
-    <div id="chat-container"></div>
-    <input type="text" id="message-input" placeholder="Type a message...">
-    <button onclick="sendMessage()">Send</button>
+    <h1>WebSocket Chat</h1>
+    <div id="status">Status: Disconnected</div>
+    <div id="chatbox"></div>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button id="sendButton">Send</button>
 
-    <script src="chat.js"></script>
+    <script>
+        // !! IMPORTANT: Replace with your deployed AWS WebSocket API URL !!
+        const socketUrl = 'wss://b3kg2sy7kg.execute-api.us-east-1.amazonaws.com/production/'; 
+        let websocket;
+
+        const statusDiv = document.getElementById('status');
+        const chatbox = document.getElementById('chatbox');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        function connect() {
+            statusDiv.textContent = 'Status: Connecting...';
+            websocket = new WebSocket(socketUrl);
+
+            websocket.onopen = function(event) {
+                statusDiv.textContent = 'Status: Connected';
+                log('Connection established.');
+            };
+
+            websocket.onmessage = function(event) {
+                // Assuming the backend sends a JSON object with a 'message' field
+                const data = JSON.parse(event.data);
+                log('Received: ' + data.message);
+            };
+
+            websocket.onclose = function(event) {
+                statusDiv.textContent = 'Status: Disconnected';
+                log('Connection closed. Code: ' + event.code);
+            };
+
+            websocket.onerror = function(error) {
+                log('Error: ' + error.message);
+            };
+        }
+
+        function send() {
+            const message = messageInput.value;
+            if (message && websocket.readyState === WebSocket.OPEN) {
+                // AWS API Gateway expects a specific JSON format to route the message to the backend
+                // The 'action' key determines which backend route (e.g., 'sendmessage') handles the data
+                const data = {
+                    action: 'sendmessage', // Replace with your actual backend route key
+                    message: message
+                };
+                websocket.send(JSON.stringify(data));
+                messageInput.value = '';
+            }
+        }
+
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            chatbox.appendChild(p);
+            chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll to bottom
+        }
+
+        sendButton.addEventListener('click', send);
+        messageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                send();
+            }
+        });
+
+        // Connect on page load
+        connect();
+    </script>
 </body>
 </html>
