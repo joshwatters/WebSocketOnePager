@@ -1,6 +1,5 @@
 const apiEndpoint = 'wss://b3kg2sy7kg.execute-api.us-east-1.amazonaws.com/production/'; 
 const apiKey = 'kVE3MmZaXg3u2igWjE5392om95UxlJ4yaqMSoTv6'; // This key needs to be enabled in your API Gateway stage settings
-const apiKey = '';
 const socketUrl = `${apiEndpoint}?x-api-key=${apiKey}`;
 const websocket = new WebSocket(socketUrl);
 
